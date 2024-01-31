@@ -21,14 +21,18 @@ public class JPanelViewController extends JPanel{
     public static enum PanelType {
         ServerSettings, Palsettings, Other
     }
-    
+    //Mark: Default constructor for JPanel
     public JPanelViewController(PanelType type){
         setLayout(null);
         setUpPanel(type);
-
     }
 
+    /**
+     * Set up the JPanel according to its type
+     * @param type : what type the panel will be (PanelType: ServerSettings, PalSettings, Other)
+     */
     public void setUpPanel(PanelType type){
+        //Typical switch statement
         switch(type){
             case ServerSettings:
             this.setLayout(new BorderLayout());

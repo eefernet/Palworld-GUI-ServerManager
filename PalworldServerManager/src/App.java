@@ -24,21 +24,11 @@ import java.util.ArrayList;
 
 
 public class App {
-
-    static Scanner scnr = new Scanner(System.in);
     static File file;
     static JFrame frame;
     static String rawString="";
     static ArrayList<String> settings = new ArrayList<String>();
     static ArrayList<Settings> settingsObjects = new ArrayList<Settings>();
-
-    public static ArrayList<Settings> getSettingsObjects() {
-        return settingsObjects;
-    }
-
-    public static ArrayList<String> getSettings() {
-        return settings;
-    }
 
     private static boolean fileLoaded = false;
     private static JTabbedPane tabbedPane;
@@ -46,115 +36,123 @@ public class App {
     public static void main(String[] args) throws Exception {
         System.out.println("Welcome to Palword Server Manager");
         setUpData();
-        processObjects();
         setUpWindow();
     }
 
     private static void setUpData(){
+        //Mark: Try to load the default file resource to grab settings
         try {
             URL path = App.class.getResource("settings.txt");
             file = new File(path.getFile());
             Scanner fileReader = new Scanner(file);
             
-
+            //Read every line and throw it into a string
             while (fileReader.hasNextLine()) {
                 String setting = fileReader.nextLine();
-                rawString+= setting;
-                
+                rawString += setting;
             }
+            //TODO: Remove this test print out later
             System.out.println(rawString);
 
-            rawString = extractSubstringBetweenParentheses(rawString, "(", ")");
+            //Get just the stuff we need to worry about, which is in between ()
+            rawString = extractSubstringBetweenParentheses(rawString, '(', ')');
+
+            //TODO: Remove this test print later, displays the raw string after removing the substring
             System.out.println("updated RAW STRING : "+rawString);
             
             fileReader = new Scanner(rawString).useDelimiter(",");
             while(fileReader.hasNext()){
                 String string = fileReader.next();
+
+                //TODO: remove temp test print out later once things are good
                 System.out.println("File reader has parsed : " + string);
                 settings.add(string);
             }
-
+            //Mark: Create setting objects for each and every setting loaded into memory
+            //TODO: Actually label them according to what kind of setting they are using the enum
             for (String string : settings) {
+                //Split the string by "=" to get the setting name and value
                 String[] values = string.split("=");
+                //Create settingsObject
                 Settings settingsObject = new Settings(values[0], values[1], Settings.SettingType.Other);
+                //Add the new settingsObject to the settingsObjects ArrayList
                 settingsObjects.add(settingsObject);
             }
-
+            /*
+            TODO: Remove test code to validate array construction later
             System.out.println("COUNT OF SETTINGS OBJECTS ARRAY : "+ settingsObjects.size());
             for (Settings objec : settingsObjects) {
                 System.out.println("Key : " + objec.getSettingName() + "   value: " + objec.getSettingValue());
             }
 
-
-
             System.out.println("SETUPDATA METHOD : "+settings.size());
+             */
+            //Close file reader cause im a good boi
             fileReader.close();
             fileLoaded = true;
             settings.remove(0);
+            //Catch file not found exception
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            System.out.println("File not found, seems like you dont have the right ini file... :(");
             fileLoaded = false;
         }
     }
 
+    //Mark: Set up the window using JFrame
     private static void setUpWindow(){
         frame = new JFrame("Palword Server Manager");
         frame.setLayout(new BorderLayout());
 
+        //TabbedPane to contain other child JPanels
         tabbedPane = new JTabbedPane();
         tabbedPane.setBounds(0, 0, 480, 620);
 
+        //Create JPanel view controllers using JPanelViewController
         JPanelViewController serverPanel = new JPanelViewController(JPanelViewController.PanelType.ServerSettings);
         JPanelViewController helpPanel = new JPanelViewController(JPanelViewController.PanelType.Palsettings);
 
+        //Create save button panel
         JPanel saveButtonPanel = new JPanel();
         saveButtonPanel.setBounds(tabbedPane.getWidth(), tabbedPane.getHeight(), frame.getWidth(), 100);
-
-        saveButtonPanel.setBackground(Color.RED);
+        //Set background then set layout
+        saveButtonPanel.setBackground(Color.GREEN);
         saveButtonPanel.setLayout(new FlowLayout());
         
-
+        //Create save button
         JButton saveButton = new JButton("Save");
+        //Add button to the save button panel
         saveButtonPanel.add(saveButton);
+        //Add the save button panel to the parent frame
         frame.add(saveButtonPanel, BorderLayout.SOUTH);
-        
+
+        //Add action listener to the save button
         saveButton.addActionListener(new ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent e){
+                //TODO: Actually make it save to file in the saveFile() method
                 saveFile();
             }
         });
 
+        //Add the individual JPanelViewControllers to each tabbed pane
         tabbedPane.add("Server Settings", serverPanel);
         tabbedPane.add("Help", helpPanel);
         
-        
+        //Set size of application window
         frame.setSize(480,720);
         frame.add(tabbedPane, BorderLayout.CENTER);
         tabbedPane.setBounds(0, 0, frame.getWidth(), frame.getHeight()-100);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Actually make it visible cause thats nice to have ya know
         frame.setVisible(true);
     }
-
-
-    private static void processObjects(){
-        if(fileLoaded){
-            for(String setting : settings){
-                System.out.println(setting);
-                String[] settingArray = setting.trim().split("=");
-                
-                Settings newSetting = new Settings(settingArray[0], settingArray[1], Settings.SettingType.ServerSettings);
-                settingsObjects.add(newSetting);
-                System.out.println(settingsObjects.size());
-            }
-
-            for (Settings setting: settingsObjects) {
-                System.out.println(setting.getSettingName() + " ::: " + setting.getSettingValue());                
-            }
-            
-        }
-    }
-
-    public static String extractSubstringBetweenParentheses(String inputString, String index1, String index2) {
+    /**
+     * Returns a string extracted from another string between two chars
+     * @param inputString : the string you want to get a substring from
+     * @param index1 : the char you want to use to start the substring process from
+     * @param index2 : the char you want to use to end the substring process from
+     * @return a substring of the given string for inputString dicated by 2 and 3rd params
+     */
+    public static String extractSubstringBetweenParentheses(String inputString, char index1, char index2) {
         int startIndex = inputString.indexOf(index1);
         int endIndex = inputString.indexOf(index2);
 
@@ -165,7 +163,17 @@ public class App {
         }
     }
 
+    //Mark: Save the file as an ini file
+    //TODO: Actually write to file, adding later
     private static void saveFile(){
         System.out.println("Saving file......");
+    }
+
+    //Mark: Getters and setters for the arraylists needed
+    public static ArrayList<Settings> getSettingsObjects() {
+        return settingsObjects;
+    }
+    public static ArrayList<String> getSettings() {
+        return settings;
     }
 }
