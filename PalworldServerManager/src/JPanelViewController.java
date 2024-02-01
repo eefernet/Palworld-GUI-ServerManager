@@ -40,7 +40,7 @@ public class JPanelViewController extends JPanel{
             //wrapper panel to throw into the scroll view
             JPanel wrapperPanel = new JPanel();
             wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.Y_AXIS));
-            
+
             //Add all the settings in one scroll pane
             for (Settings settings : App.settingsObjects) {
                 //make a setting pannel
@@ -57,7 +57,7 @@ public class JPanelViewController extends JPanel{
                 JTextField textField = new JTextField();
                 textField.setText(settings.getSettingValue());
                 textField.setAlignmentX(RIGHT_ALIGNMENT);
-                
+
                 //add the fields to the setting panel
                 settingPanel.add(textPane);
                 settingPanel.add(textField);
@@ -65,7 +65,9 @@ public class JPanelViewController extends JPanel{
                 //Set layout and ad it to the wrapper panel
                 //TODO: change later to a different layout that makes sense so they are all aligned.
                 settingPanel.setLayout(new FlowLayout());
-                wrapperPanel.add(settingPanel);   
+                wrapperPanel.add(settingPanel);
+
+                textFields.add(textField);
             }
 
             //Create a scroll panel with a child of wrapperPanel
@@ -74,13 +76,21 @@ public class JPanelViewController extends JPanel{
             scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             //Add scroll bar
             add(scrollPanel);
-            
+
                 break;
             case Palsettings:
 
                 break;
             case Other:
                 break;
+        }
+
+
+    }
+
+    public void updateComponents(){
+        for (Settings settings: App.getSettingsObjects()){
+            textFields.get(App.getSettingsObjects().indexOf(settings)).setText(settings.getSettingValue());
         }
     }
 }
