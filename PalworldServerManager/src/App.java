@@ -236,12 +236,40 @@ public class App {
 
         String outPutString = "[/Script/Pal.PalGameWorldSettings]\n" + "OptionSettings=(";
         BufferedWriter bufOutput = null;
+
+        /**
+         * TODO: Print writer method to write to file
+         */
+        if(file != null){
+            try{
+                PrintWriter writer = new PrintWriter(file);
+                writer.print(outPutString);
+                for (int i = 0; i < settingsObjects.size(); i++) {
+                    Settings set = settingsObjects.get(i);
+                    if(i + 1 != settingsObjects.size()){
+                        writer.print(set.getSettingName()+"="+set.getSettingValue()+",");
+                    }else{
+                        writer.print(set.getSettingName()+"="+set.getSettingValue()+")");
+                    }
+                }
+                writer.flush();
+                writer.close();
+            }catch (Exception e){
+                System.out.println("Something went wrong saving the file >>> "+e.getMessage());
+            }
+
+        }
+
+        /**
+         * TODO: Update this to print writer instead of buffered writer see above
+         */
+        /*
         if(file != null){
             try{
                 bufOutput = new BufferedWriter(new FileWriter(file));
 
                 bufOutput.write(outPutString);
-
+                bufOutput.flush();
                 for (int i = 0; i < settingsObjects.size(); i++) {
                     Settings set = settingsObjects.get(i);
                     if(i + 1 != settingsObjects.size()){
@@ -250,14 +278,20 @@ public class App {
                         bufOutput.write(set.getSettingName()+"="+set.getSettingValue()+")");
                     }
                 }
+                bufOutput.flush();
 
             }catch (Exception e){
                 System.out.println("Something went wrong saving the file >>> "+e.getMessage());
+            }finally {
+                if(bufOutput != null){
+                    try {
+                        bufOutput.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
-
-
-
+        }*/
     }
 
     //Mark: Getters and setters for the arraylists needed
