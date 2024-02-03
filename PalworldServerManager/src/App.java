@@ -1,4 +1,5 @@
 import java.awt.event.ActionEvent;
+import java.io.*;
 import java.util.Scanner;
 
 import javax.swing.JButton;
@@ -15,9 +16,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.file.NoSuchFileException;
@@ -51,6 +49,7 @@ public class App {
             try {
                 URL path = App.class.getResource("settings.txt");
                 file = new File(path.getFile());
+                System.out.println("PATH OF FILE :::: >>>> "+ file.getAbsolutePath());
                 fileReader = new Scanner(file);
 
 
@@ -58,6 +57,8 @@ public class App {
             } catch (FileNotFoundException e) {
                 System.out.println("File not found, seems like you dont have the right ini file... :(");
                 fileLoaded = false;
+            }catch (Exception e){
+                System.out.println(e.getMessage());
             }
         }else{
             System.out.println("File is not NULL!!!!!");
@@ -79,6 +80,7 @@ public class App {
         //TODO: Remove this test print later, displays the raw string after removing the substring
         System.out.println("updated RAW STRING : "+rawString);
 
+        //TODO: SOMETHING IS BROKEN HERE
         fileReader = new Scanner(rawString).useDelimiter(",");
         while(fileReader.hasNext()){
             String string = fileReader.next();
@@ -89,6 +91,7 @@ public class App {
         }
         //Mark: Create setting objects for each and every setting loaded into memory
         //TODO: Actually label them according to what kind of setting they are using the enum
+        settingsObjects.clear();
         for (String string : settings) {
             //Split the string by "=" to get the setting name and value
             String[] values = string.split("=");
@@ -112,22 +115,27 @@ public class App {
         settings.remove(0);
     }
 
+    /**
+    Returns a file after presenting user with java file selector GUI.
+        @return A File object
+     */
     private static File getFile() throws NoSuchFileException, FileNotFoundException{
         System.out.println("Loading file from file explorer...");
-
+        //Create fileChooser object
         JFileChooser fileChooser = new JFileChooser();
         int response = fileChooser.showOpenDialog(null);
         fileChooser.setDialogTitle("Select the server ini file");
 
+        //If the user presses the ok button assign the file object
         if(response == JFileChooser.APPROVE_OPTION){
             file = fileChooser.getSelectedFile();
             System.out.println("File that was selected : " + file.getName() + " at : " + file.getAbsolutePath());
+            return file;
         }
-        else{
+        //Throw file exception when user doesnt select an appropriate file
+        else {
             throw new NoSuchFileException("No file selected");
         }
-
-        return file;
     }
 
     //Mark: Set up the window using JFrame
@@ -225,6 +233,31 @@ public class App {
     //TODO: Actually write to file, adding later
     private static void saveFile(){
         System.out.println("Saving file......");
+
+        String outPutString = "[/Script/Pal.PalGameWorldSettings]\n" + "OptionSettings=(";
+        BufferedWriter bufOutput = null;
+        if(file != null){
+            try{
+                bufOutput = new BufferedWriter(new FileWriter(file));
+
+                bufOutput.write(outPutString);
+
+                for (int i = 0; i < settingsObjects.size(); i++) {
+                    Settings set = settingsObjects.get(i);
+                    if(i + 1 != settingsObjects.size()){
+                        bufOutput.write(set.getSettingName()+"="+set.getSettingValue()+",");
+                    }else{
+                        bufOutput.write(set.getSettingName()+"="+set.getSettingValue()+")");
+                    }
+                }
+
+            }catch (Exception e){
+                System.out.println("Something went wrong saving the file >>> "+e.getMessage());
+            }
+        }
+
+
+
     }
 
     //Mark: Getters and setters for the arraylists needed

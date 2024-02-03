@@ -12,12 +12,13 @@ import java.util.Map;
 import javax.swing.*;
 
 public class JPanelViewController extends JPanel{
-    boolean fileLoaded = false;
-
-    ArrayList<JLabel> labels = new ArrayList<JLabel>();
     ArrayList<JTextField> textFields = new ArrayList<JTextField>();
+    //TODO: Use this already existing hashmap
     static Map<String, String> settings = new HashMap<String, String>();
 
+    /*TODO: Delete this later? Figuring having all the settings on one page is fine
+            however it can get messy.
+     */
     public static enum PanelType {
         ServerSettings, Palsettings, Other
     }
@@ -43,12 +44,12 @@ public class JPanelViewController extends JPanel{
 
             //Add all the settings in one scroll pane
             for (Settings settings : App.settingsObjects) {
-                //make a setting pannel
+                //make a setting panel
                 JPanel settingPanel = new JPanel();
                 settingPanel.setBounds(this.getWidth(), this.getHeight(), this.getWidth(), 100);
                 //Add textPane setting description
                 JTextPane textPane = new JTextPane();
-                textPane.setBounds(0,0,350,40);
+                textPane.setBounds(0,0,500,60);
                 textPane.setAlignmentX(RIGHT_ALIGNMENT);
                 textPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
                 textPane.setText(settings.getSettingName());
@@ -84,13 +85,28 @@ public class JPanelViewController extends JPanel{
             case Other:
                 break;
         }
-
-
     }
 
+    /*/
+    TODO: Make this better. Have all this use a hash map then this atrocious for loop. Will need to adjust the
+          other classes for this change as well. ArrayList to Hashmap for storing keyvalue pairs.
+          This works for now, until the developer adds more complex settings. Also leaves it for more errors.
+     */
     public void updateComponents(){
-        for (Settings settings: App.getSettingsObjects()){
-            textFields.get(App.getSettingsObjects().indexOf(settings)).setText(settings.getSettingValue());
+        int size = textFields.size();
+        for (int i= 0; i< textFields.size(); i++){
+
+            int adjustedIndex = (i + size - 1) % size;
+            JTextField text = textFields.get(i);
+            String oldText = text.getText();
+            text.setText(App.getSettingsObjects().get(adjustedIndex).getSettingValue());
+
+            //TODO: DEBUG PRINT DELETE LATER
+            if (!oldText.trim().equals(text.getText().trim())) {
+                System.out.println("TEXT FIELD UPDATED!!!!!!!!!! NEW STRING > ::::: " + text.getText() + "\nOLD TEXT >:::: " + oldText);
+            }else{
+                System.out.println("TEXT FIELD NOT UPDATED??????????? ::::: "+ text.getText()+ "\nOLD TEXT >:::: " + oldText);
+            }
         }
     }
 }
