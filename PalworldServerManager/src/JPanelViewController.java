@@ -87,6 +87,15 @@ public class JPanelViewController extends JPanel{
         }
     }
 
+    public void upDateObjects(){
+        for (int i = 0; i < textFields.size(); i++){
+
+            System.out.println("Old value : " + App.getSettingsObjects().get(i).getSettingValue() + " new value : " + textFields.get(i).getText());
+
+            App.getSettingsObjects().get(i).setSettingValue(textFields.get(i).getText());
+        }
+    }
+
     /*/
     TODO: Make this better. Have all this use a hash map then this atrocious for loop. Will need to adjust the
           other classes for this change as well. ArrayList to Hashmap for storing keyvalue pairs.

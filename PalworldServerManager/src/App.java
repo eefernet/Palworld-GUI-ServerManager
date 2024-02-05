@@ -71,6 +71,7 @@ public class App {
             String setting = fileReader.nextLine();
             rawString += setting;
         }
+
         //TODO: Remove this test print out later
         System.out.println(rawString);
 
@@ -175,6 +176,7 @@ public class App {
         saveButton.addActionListener(new ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent e){
                 //TODO: Actually make it save to file in the saveFile() method
+                serverPanel.upDateObjects();
                 saveFile();
             }
         });
