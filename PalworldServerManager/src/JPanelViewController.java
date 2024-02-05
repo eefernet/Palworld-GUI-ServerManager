@@ -1,3 +1,8 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.ComponentOrientation;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -7,176 +12,110 @@ import java.util.Map;
 import javax.swing.*;
 
 public class JPanelViewController extends JPanel{
-    JButton loadIniButton;
-    boolean fileLoaded = false;
-
-    ArrayList<JLabel> labels = new ArrayList<JLabel>();
     ArrayList<JTextField> textFields = new ArrayList<JTextField>();
+    //TODO: Use this already existing hashmap
     static Map<String, String> settings = new HashMap<String, String>();
 
+    /*TODO: Delete this later? Figuring having all the settings on one page is fine
+            however it can get messy.
+     */
     public static enum PanelType {
         ServerSettings, Palsettings, Other
     }
-    
+    //Mark: Default constructor for JPanel
     public JPanelViewController(PanelType type){
         setLayout(null);
         setUpPanel(type);
-
     }
 
+    /**
+     * Set up the JPanel according to its type
+     * @param type : what type the panel will be (PanelType: ServerSettings, PalSettings, Other)
+     */
     public void setUpPanel(PanelType type){
+        //Typical switch statement
         switch(type){
             case ServerSettings:
-            JLabel panelInfo = new JLabel("All settings regarding difficulty, Day night rate, etc. will be here.");
-            panelInfo.setBounds(0, 10, 500, 30);
-            add(panelInfo);
+            this.setLayout(new BorderLayout());
 
-            //Load ini Button
-            JLabel loadIniLabel = new JLabel("Load ini file : ");
-            loadIniButton = new JButton("Load");
-            loadIniLabel.setBounds(10, 50, 100, 30);
-            loadIniButton.setBounds(loadIniLabel.getX() + loadIniLabel.getWidth(), loadIniLabel.getY(), 100, 30);
-            
-            //Add action listener to load ini button
-            loadIniButton.addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent e){
-                    loadFile();
-                    fileLoaded = true;
-                    
-                    JLabel fileLoaded = new JLabel("Ini file loaded");
-                    fileLoaded.setBounds(loadIniButton.getX() + loadIniButton.getWidth() + 10, loadIniButton.getY(), 100, 30);
-                    add(fileLoaded);
-                    getValues();
-                    revalidate();
-                    repaint();
-                    setUpPanel(type);
-                }
-            });
-            add(loadIniLabel);
-            add(loadIniButton);
+            //wrapper panel to throw into the scroll view
+            JPanel wrapperPanel = new JPanel();
+            wrapperPanel.setLayout(new BoxLayout(wrapperPanel, BoxLayout.Y_AXIS));
 
-            if(fileLoaded){
-                int offest = 50;
-                for(int i = 0; i < 3; i++){
-                    String[] values = App.getSettings().get(i).split("=");
-                    JLabel label = new JLabel("<html>" + values[0] + "</html>");
-                    label.setHorizontalAlignment(SwingConstants.LEFT);
-                    label.setBounds(5, loadIniLabel.getY()+offest, 300, 30);
-                    offest += 50;
+            //Add all the settings in one scroll pane
+            for (Settings settings : App.settingsObjects) {
+                //make a setting panel
+                JPanel settingPanel = new JPanel();
+                settingPanel.setBounds(this.getWidth(), this.getHeight(), this.getWidth(), 100);
+                //Add textPane setting description
+                JTextPane textPane = new JTextPane();
+                textPane.setBounds(0,0,500,60);
+                textPane.setAlignmentX(RIGHT_ALIGNMENT);
+                textPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+                textPane.setText(settings.getSettingName());
 
-                    JTextField textField = new JTextField();
-                    textField.setText(values[1]);
-                    textField.setBounds(label.getWidth() + 50, label.getY(), 100, 30);
+                //Add the textField
+                JTextField textField = new JTextField();
+                textField.setText(settings.getSettingValue());
+                textField.setAlignmentX(RIGHT_ALIGNMENT);
 
-                    labels.add(label);
-                    textFields.add(textField);
-                    add(label);
-                    add(textField);
-                }
-                
-                
+                //add the fields to the setting panel
+                settingPanel.add(textPane);
+                settingPanel.add(textField);
+
+                //Set layout and ad it to the wrapper panel
+                //TODO: change later to a different layout that makes sense so they are all aligned.
+                settingPanel.setLayout(new FlowLayout());
+                wrapperPanel.add(settingPanel);
+
+                textFields.add(textField);
             }
+
+            //Create a scroll panel with a child of wrapperPanel
+            JScrollPane scrollPanel = new JScrollPane(wrapperPanel);
+            //set scroll bar policy
+            scrollPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+            //Add scroll bar
+            add(scrollPanel);
+
                 break;
             case Palsettings:
 
-            if(fileLoaded){
-                System.out.println("Pal tab loaded");
-                JLabel desc = new JLabel("Pal settings will be here.");
-                desc.setBounds(5, 10, 300, 30);
-                int offest = 50;
-                add(desc);
-
-                for(String key : settings.keySet()){
-                    //System.out.println("Key: " + key + " Value: " + settings.get(key));
-                    
-                        System.out.println("Key: " + key + " Value: " + settings.get(key) + "PAL WAS DEDTECTED");
-                        JLabel label = new JLabel("<html>" + key + "</html>");
-                        label.setHorizontalAlignment(SwingConstants.LEFT);
-                        label.setBounds(5, desc.getY()+offest, 300, 30);
-                        offest += 50;
-
-                        JTextField textField = new JTextField();
-                        textField.setText(settings.get(key));
-                        textField.setBounds(label.getWidth() + 50, label.getY(), 100, 30);
-
-                        labels.add(label);
-                        textFields.add(textField);
-                        add(label);
-                        add(textField);
-                    
-                }
-
-                for (Map.Entry<String, String> entry : settings.entrySet()) {
-
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    
-                }
-                /* 
-                for(int i = 4; i < 8; i++){
-                    String[] values = App.getSettings().get(i).split("=");
-                    JLabel label = new JLabel("<html>" + values[0] + "</html>");
-                    label.setHorizontalAlignment(SwingConstants.LEFT);
-                    label.setBounds(5, desc.getY()+offest, 300, 30);
-                    offest += 50;
-
-                    JTextField textField = new JTextField();
-                    textField.setText(values[1]);
-                    textField.setBounds(label.getWidth() + 50, label.getY(), 100, 30);
-
-                    labels.add(label);
-                    textFields.add(textField);
-                    add(label);
-                    add(textField);
-                }
-
-                for(int i = 14; i < 18; i++){
-                    String[] values = App.getSettings().get(i).split("=");
-                    JLabel label = new JLabel("<html>" + values[0] + "</html>");
-                    label.setHorizontalAlignment(SwingConstants.LEFT);
-                    label.setBounds(5, desc.getY()+offest, 300, 30);
-                    offest += 50;
-
-                    JTextField textField = new JTextField();
-                    textField.setText(values[1]);
-                    textField.setBounds(label.getWidth() + 50, label.getY(), 100, 30);
-
-                    labels.add(label);
-                    textFields.add(textField);
-                    add(label);
-                    add(textField);
-                }
-                */
-                
-            }
                 break;
             case Other:
                 break;
         }
     }
-    private static String getValue(int index){
-        String[] values = App.settings.get(index).split("=");
-        return values[1];
-    }
 
-    private static void getValues(){
-        System.out.println("RUNNING GET VALUES");
-        
-        for(int i = 0; i < App.getSettings().size(); i++){
-            String[] value = App.getSettings().get(i).split("=");
-            String key = value[0];
-            String val = value[1];
-            settings.put(key, val);
+    public void upDateObjects(){
+        for (int i = 0; i < textFields.size(); i++){
+
+            System.out.println("Old value : " + App.getSettingsObjects().get(i).getSettingValue() + " new value : " + textFields.get(i).getText());
+
+            App.getSettingsObjects().get(i).setSettingValue(textFields.get(i).getText());
         }
     }
 
-    public void addButtonListener(ActionListener listener){
-        //Add action listener to the load button
-        loadIniButton.addActionListener(listener);
-    }
+    /*/
+    TODO: Make this better. Have all this use a hash map then this atrocious for loop. Will need to adjust the
+          other classes for this change as well. ArrayList to Hashmap for storing keyvalue pairs.
+          This works for now, until the developer adds more complex settings. Also leaves it for more errors.
+     */
+    public void updateComponents(){
+        int size = textFields.size();
+        for (int i= 0; i< textFields.size(); i++){
 
-    public static void loadFile(){
-        System.out.println("Loading file......");
+            int adjustedIndex = (i + size - 1) % size;
+            JTextField text = textFields.get(i);
+            String oldText = text.getText();
+            text.setText(App.getSettingsObjects().get(adjustedIndex).getSettingValue());
+
+            //TODO: DEBUG PRINT DELETE LATER
+            if (!oldText.trim().equals(text.getText().trim())) {
+                System.out.println("TEXT FIELD UPDATED!!!!!!!!!! NEW STRING > ::::: " + text.getText() + "\nOLD TEXT >:::: " + oldText);
+            }else{
+                System.out.println("TEXT FIELD NOT UPDATED??????????? ::::: "+ text.getText()+ "\nOLD TEXT >:::: " + oldText);
+            }
+        }
     }
 }
