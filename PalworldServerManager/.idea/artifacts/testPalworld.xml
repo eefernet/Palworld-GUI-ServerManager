@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="testPalworld">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <root id="archive" name="PalworldServerManager.jar">
+      <element id="module-output" name="PalworldServerManager" />
+    </root>
+  </artifact>
+</component>
