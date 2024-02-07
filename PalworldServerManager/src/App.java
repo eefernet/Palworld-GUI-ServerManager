@@ -48,18 +48,18 @@ public class App {
         if(file == null){
             System.out.println("File is NULL!!!!!");
             try {
-                URL path = App.class.getResource("settings.txt");
-                file = new File(path.getFile());
-                System.out.println("PATH OF FILE :::: >>>> "+ file.getAbsolutePath());
-                fileReader = new Scanner(file);
+
+                InputStream is =  App.class.getResourceAsStream("settings.txt");
+                fileReader = new Scanner(is);
+
+                fileLoaded = true;
+                System.out.println("Default file loaded...");
 
 
                 //Catch file not found exception
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found, seems like you dont have the right ini file... :(");
-                fileLoaded = false;
             }catch (Exception e){
-                System.out.println(e.getMessage());
+                System.out.println("An unknown error occured :( >>>> "+e.getMessage());
+                fileLoaded = false;
             }
         }else{
             System.out.println("File is not NULL!!!!!");
@@ -245,7 +245,9 @@ public class App {
          */
         if(file != null){
             try{
+                serverPanel.upDateObjects();
                 PrintWriter writer = new PrintWriter(file);
+                writer.flush();
                 writer.print(outPutString);
                 for (int i = 0; i < settingsObjects.size(); i++) {
                     Settings set = settingsObjects.get(i);
@@ -262,39 +264,6 @@ public class App {
             }
 
         }
-
-        /**
-         * TODO: Update this to print writer instead of buffered writer see above
-         */
-        /*
-        if(file != null){
-            try{
-                bufOutput = new BufferedWriter(new FileWriter(file));
-
-                bufOutput.write(outPutString);
-                bufOutput.flush();
-                for (int i = 0; i < settingsObjects.size(); i++) {
-                    Settings set = settingsObjects.get(i);
-                    if(i + 1 != settingsObjects.size()){
-                        bufOutput.write(set.getSettingName()+"="+set.getSettingValue()+",");
-                    }else{
-                        bufOutput.write(set.getSettingName()+"="+set.getSettingValue()+")");
-                    }
-                }
-                bufOutput.flush();
-
-            }catch (Exception e){
-                System.out.println("Something went wrong saving the file >>> "+e.getMessage());
-            }finally {
-                if(bufOutput != null){
-                    try {
-                        bufOutput.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }*/
     }
 
     //Mark: Getters and setters for the arraylists needed
