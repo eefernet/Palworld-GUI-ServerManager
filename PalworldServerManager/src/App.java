@@ -41,6 +41,7 @@ public class App {
         setUpWindow();
     }
 
+    //TODO: Update this method to use fileInputStream rather than pulling a url path
     private static void setUpData() throws FileNotFoundException {
         //Mark: Try to load the default file resource to grab settings
 
