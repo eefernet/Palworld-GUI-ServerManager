@@ -34,6 +34,16 @@ Dependencies not explicitly covered in the installation process; e.g., OS restri
 
 ~~Check releases tab on the right ->~~
 
+- If you really want to try it out, 
+1. Create empty folder anywhere on your computer
+1. Make sure you have git installed
+2. Run this command with CMD/terminal
+   ```
+   git clone https://github.com/eefernet/Palworld-GUI-ServerManager
+   ```
+3. Open up project in any given IDE of your choice.
+
+
 ### Configure
 
 No need to configure, find a place to store your jar file and run it whenever you need. I dont think antimalware will have an issue but you might have to allow this jar file to run through your windows defender, etc...
