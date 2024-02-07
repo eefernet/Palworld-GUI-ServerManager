@@ -16,7 +16,7 @@ Palworld Server manager might eventually get console commands as well using RCON
 
 - Load from an existing ini file.
 - save your new inputed settings.
-- Checks for ini file erros.
+- Checks for ini file errors.
 
 ### Built with
 
