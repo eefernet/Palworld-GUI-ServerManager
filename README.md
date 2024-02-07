@@ -1,4 +1,4 @@
-# TINY README Template
+# Palworld Server Manager
 
 A simple java palword ini file configurator. Open up your existing ini file and adjust settings using easier to use GUI interface.
 
