@@ -68,7 +68,7 @@ Thanks to all who helped inspire this template.
 
 ### See also
 
-- [A simple clipboard manager for macOS](https://github.com/TacoCatDev/clipster)
+- [A simple clipboard manager for macOS](https://github.com/eefernet/clipster)
 - [A meme autoclicker for EU4](https://github.com/eefernet/WaifuAutoclicker)
 
 ### To-do
